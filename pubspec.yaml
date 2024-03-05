@@ -1,0 +1,41 @@
+name: news_assistant
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  bot_toast: ^4.1.3
+  flutter:
+    sdk: flutter
+  flutter_svg: ^2.0.10+1
+  go_router: ^13.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/svgs/
+
+  fonts:
+      - family: Satoshi
+        fonts:
+          - asset: fonts/Satoshi-Black.otf
+          - asset: fonts/Satoshi-BlackItalic.otf
+            style: italic
+          - asset: fonts/Satoshi-Bold.otf
+          - asset: fonts/Satoshi-BoldItalic.otf
+          - asset: fonts/Satoshi-Italic.otf
+          - asset: fonts/Satoshi-Light.otf
+          - asset: fonts/Satoshi-LightItalic.otf
+          - asset: fonts/Satoshi-Medium.otf
+          - asset: fonts/Satoshi-MediumItalic.otf
+          - asset: fonts/Satoshi-Regular.otf
