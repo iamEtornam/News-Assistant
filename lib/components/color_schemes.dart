@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+Color grey = const Color(0xFFDCDADA);
+Color grey2 = const Color(0xFFB1B0B0);
+
 const lightColorScheme = ColorScheme(
   brightness: Brightness.light,
   primary: Color(0xFF984061),
