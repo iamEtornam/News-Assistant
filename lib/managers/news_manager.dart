@@ -15,4 +15,8 @@ class NewsManager extends ChangeNotifier {
   Future<News> getOtherNews({String country = 'us'}) async {
     return await newsServices.otherNews(country: country);
   }
+
+  Future <GenerateContentResponse> summarize({required String article}) async {
+    return await newsServices.summarize(article: article);
+  }
 }

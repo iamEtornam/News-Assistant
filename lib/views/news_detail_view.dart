@@ -8,6 +8,7 @@ import 'package:news_assistant/components/news_agency_header.dart';
 import 'package:news_assistant/models/news.dart';
 import 'package:news_assistant/resources/resources.dart';
 import 'package:news_assistant/router.dart';
+import 'package:share_plus/share_plus.dart';
 
 class NewsDetailView extends StatelessWidget {
   const NewsDetailView({super.key, required this.articles});
@@ -17,7 +18,10 @@ class NewsDetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppBar(),
+      appBar: AppBar(
+        onBookmark: () {},
+        onShare: () => Share.share('Hey! Check out this article: ${articles.url}'),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -77,7 +81,8 @@ class NewsDetailView extends StatelessWidget {
                                   height: 216,
                                   width: MediaQuery.sizeOf(context).width,
                                   progressIndicatorBuilder:
-                                      (context, url, downloadProgress) => Center(
+                                      (context, url, downloadProgress) =>
+                                          Center(
                                     child: CircularProgressIndicator(
                                         value: downloadProgress.progress),
                                   ),
@@ -109,10 +114,9 @@ class NewsDetailView extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primary)),
           const SizedBox(height: 10),
           Text(articles.title!,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge!
-                  .copyWith(fontWeight: FontWeight.w900, fontSize: 24,
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 24,
                   letterSpacing: 0,
                   height: 1.1)),
           const SizedBox(height: 10),
@@ -130,7 +134,10 @@ class NewsDetailView extends StatelessWidget {
 }
 
 class AppBar extends StatelessWidget implements PreferredSizeWidget {
-  const AppBar({super.key});
+  const AppBar({super.key, required this.onShare, required this.onBookmark});
+
+  final VoidCallback onShare;
+  final VoidCallback onBookmark;
 
   @override
   Widget build(BuildContext context) {
