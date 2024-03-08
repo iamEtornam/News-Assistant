@@ -150,45 +150,7 @@ class NewsCard extends StatelessWidget {
                         width: MediaQuery.sizeOf(context).width,
                         color: Colors.red.withOpacity(.2),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                const CircleAvatar(
-                                  radius: 29 / 2,
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  'CNN Philippines',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .copyWith(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            ),
-                            const Spacer(),
-                            Text(
-                              '10 minutes ago',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600),
-                            )
-                          ],
-                        ),
-                      )
+                      NewsAgencyHeader()
                     ],
                   ),
                 ),
@@ -199,7 +161,7 @@ class NewsCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w900,
                     fontSize: 20,
                     letterSpacing: 0,
                     height: 1.1),
@@ -207,6 +169,55 @@ class NewsCard extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class NewsAgencyHeader extends StatelessWidget {
+  const NewsAgencyHeader({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const CircleAvatar(
+                radius: 29 / 2,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Text(
+                'CNN Philippines',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
+              )
+            ],
+          ),
+          const Spacer(),
+          Text(
+            '10 minutes ago',
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium!
+                .copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600),
+          )
+        ],
       ),
     );
   }
