@@ -62,10 +62,12 @@ final GoRouter router = GoRouter(
               path: Routes.details.path,
               name: Routes.details.name,
               pageBuilder: (BuildContext context, GoRouterState state) {
+                final args = state.extra as (Articles, String);
                 return CustomTransitionPage(
                   key: state.pageKey,
                   child: NewsDetailView(
-                    articles: state.extra as Articles,
+                    articles: args.$1,
+                    heroTag: args.$2,
                   ),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {

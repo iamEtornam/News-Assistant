@@ -11,16 +11,19 @@ import 'package:news_assistant/router.dart';
 import 'package:share_plus/share_plus.dart';
 
 class NewsDetailView extends StatelessWidget {
-  const NewsDetailView({super.key, required this.articles});
+  const NewsDetailView({super.key, required this.articles, required this.heroTag});
 
   final Articles articles;
+  final String heroTag;
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         onBookmark: () {},
-        onShare: () => Share.share('Hey! Check out this article: ${articles.url}'),
+        onShare: () =>
+            Share.share('Hey! Check out this article: ${articles.url}'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -61,7 +64,7 @@ class NewsDetailView extends StatelessWidget {
               children: [
                 NewsAgencyHeader(imageSize: 25, articles: articles),
                 Hero(
-                  tag: articles.title!,
+                  tag: heroTag,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(13.75),
                     child: SizedBox(

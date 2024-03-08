@@ -25,151 +25,177 @@ class HomeView extends ConsumerStatefulWidget {
 
 class _HomeViewState extends ConsumerState<HomeView> {
   final scrollController = ScrollController();
-  String categotySelected = 'All';
+  ValueNotifier<String> categotySelectedListenable = ValueNotifier('All');
   @override
   Widget build(BuildContext context) {
     final newsManager = ref.read(_newsManager);
 
     return Scaffold(
       appBar: const MyAppBar(),
-      body: ListView(
-        controller: scrollController,
-        padding: const EdgeInsets.all(16),
-        children: [
-          FutureBuilder<News>(
-              future: newsManager.getHeadlines(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting ||
-                    !snapshot.hasData) {
-                  return const LinearProgressIndicator();
-                }
+      body: ValueListenableBuilder(
+          valueListenable: categotySelectedListenable,
+          builder: (context, categotySelected, _) {
+            return ListView(
+              controller: scrollController,
+              padding: const EdgeInsets.all(16),
+              children: [
+                FutureBuilder<News>(
+                    future: newsManager.getHeadlines(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting ||
+                          !snapshot.hasData) {
+                        return const LinearProgressIndicator();
+                      }
 
-                final articles = snapshot.data?.articles ?? [];
+                      final articles = snapshot.data?.articles ?? [];
 
-                if (articles.isEmpty) {
-                  return const Center(
-                    child: Text('No articles found'),
-                  );
-                }
+                      if (articles.isEmpty) {
+                        return const Center(
+                          child: Text('No articles found'),
+                        );
+                      }
 
-                final categories =
-                    articles.map((e) => e.source!.name).toSet().toList();
-                categories.insert(0, 'All');
-                final displayArticles = articles.where((element) {
-                  if (categotySelected == 'All') {
-                    return true;
-                  }
-                  return element.source!.name == categotySelected;
-                }).toList();
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 38,
-                      child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: List.generate(
-                              categories.length,
-                              (index) => Padding(
-                                    padding: const EdgeInsets.only(right: 10),
-                                    child: CategoryChip(
-                                      isSelected:
-                                          categotySelected == categories[index],
-                                      label: categories[index]!,
-                                      onTap: () {
-                                        setState(() {
-                                          categotySelected = categories[index]!;
-                                        });
-                                      },
-                                    ),
-                                  ))),
-                    ),
-                    const SizedBox(
-                      height: 18,
-                    ),
-                    Text(
-                      'Inbound Now!',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          fontSize: 35,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary),
-                    ),
-                    const SizedBox(height: 18),
-                    SizedBox(
-                      height: 265,
-                      child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
+                      final categories =
+                          articles.map((e) => e.source!.name).toSet().toList();
+                      categories.insert(0, 'All');
+                      final displayArticles = articles.where((element) {
+                        if (categotySelected == 'All') {
+                          return true;
+                        }
+                        return element.source!.name == categotySelected;
+                      }).toList();
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 38,
+                            child: ListView(
+                                scrollDirection: Axis.horizontal,
+                                children: List.generate(
+                                    categories.length,
+                                    (index) => Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 10),
+                                          child: CategoryChip(
+                                            isSelected: categotySelected ==
+                                                categories[index],
+                                            label: categories[index]!,
+                                            onTap: () {
+                                              categotySelectedListenable.value =
+                                                  categories[index]!;
+                                            },
+                                          ),
+                                        ))),
+                          ),
+                          const SizedBox(
+                            height: 18,
+                          ),
+                          Text(
+                            'Inbound Now!',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
+                                    fontSize: 35,
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                          ),
+                          const SizedBox(height: 18),
+                          if (categotySelected == 'All') ...{
+                            SizedBox(
+                              height: 265,
+                              child: ListView.separated(
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    final heroTag =
+                                        '${articles[index].title!.replaceAll(' ', '')}${'${articles[index].publishedAt}'.replaceAll(' ', '')}inbound';
+
+                                    return SizedBox(
+                                      width: MediaQuery.sizeOf(context).width /
+                                          1.2,
+                                      child: NewsCard(
+                                        heroTag: heroTag,
+                                        article: displayArticles[index],
+                                        onTap: () => context.pushNamed(
+                                            Routes.details.name,
+                                            extra: (
+                                              displayArticles[index],
+                                              heroTag
+                                            )),
+                                      ),
+                                    );
+                                  },
+                                  separatorBuilder: (__, _) => const SizedBox(
+                                        width: 10,
+                                      ),
+                                  itemCount: displayArticles.length),
+                            ),
+                          },
+                        ],
+                      );
+                    }),
+                if (categotySelected == 'All') ...{
+                  const SizedBox(
+                    height: 18,
+                  ),
+                  Text(
+                    'Other News:',
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary),
+                  ),
+                  const SizedBox(height: 12),
+                },
+                FutureBuilder<News>(
+                    future: newsManager.getOtherNews(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting ||
+                          !snapshot.hasData) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      final articles = snapshot.data?.articles ?? [];
+
+                      if (articles.isEmpty) {
+                        return const Center(
+                          child: Text('No articles found'),
+                        );
+                      }
+
+                      final displayArticles = articles.where((element) {
+                        if (categotySelected == 'All') {
+                          return true;
+                        }
+                        return element.source!.name == categotySelected;
+                      }).toList();
+                      displayArticles.shuffle();
+
+                      return ListView.separated(
+                          controller: scrollController,
+                          shrinkWrap: true,
                           itemBuilder: (context, index) {
-                            return SizedBox(
-                              width: MediaQuery.sizeOf(context).width / 1.2,
-                              child: NewsCard(
-                                article: displayArticles[index],
-                                onTap: () => context.pushNamed(
-                                    Routes.details.name,
-                                    extra: displayArticles[index]),
-                              ),
+                            final heroTag =
+                                '${articles[index].title!.replaceAll(' ', '')}${'${articles[index].publishedAt}'.replaceAll(' ', '')}other';
+                            return NewsCard(
+                              heroTag: heroTag,
+                              article: displayArticles[index],
+                              onTap: () => context.pushNamed(
+                                  Routes.details.name,
+                                  extra: (displayArticles[index], heroTag)),
                             );
                           },
-                          separatorBuilder: (__, _) => const SizedBox(
-                                width: 10,
-                              ),
-                          itemCount: displayArticles.length),
-                    ),
-                  ],
-                );
-              }),
-          const SizedBox(
-            height: 18,
-          ),
-          Text(
-            'Other News:',
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary),
-          ),
-          const SizedBox(height: 12),
-          FutureBuilder<News>(
-              future: newsManager.getOtherNews(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting ||
-                    !snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                final articles = snapshot.data?.articles ?? [];
-
-                if (articles.isEmpty) {
-                  return const Center(
-                    child: Text('No articles found'),
-                  );
-                }
-
-                final displayArticles = articles.where((element) {
-                  if (categotySelected == 'All') {
-                    return true;
-                  }
-                  return element.source!.name == categotySelected;
-                }).toList();
-                return ListView.separated(
-                    controller: scrollController,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return NewsCard(
-                        article: displayArticles[index],
-                        onTap: () => context.pushNamed(Routes.details.name,
-                            extra: displayArticles[index]),
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return const SizedBox(width: 10);
-                    },
-                    itemCount: 10);
-              })
-        ],
-      ),
+                          separatorBuilder: (context, index) {
+                            return const SizedBox(width: 10);
+                          },
+                          itemCount: displayArticles.length);
+                    })
+              ],
+            );
+          }),
     );
   }
 }
@@ -179,10 +205,12 @@ class NewsCard extends StatelessWidget {
     super.key,
     required this.onTap,
     required this.article,
+    required this.heroTag,
   });
 
   final VoidCallback onTap;
   final Articles article;
+  final String heroTag;
 
   @override
   Widget build(BuildContext context) {
@@ -199,7 +227,7 @@ class NewsCard extends StatelessWidget {
           child: Column(
             children: [
               Hero(
-                tag: article.title!,
+                tag: heroTag,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(13.75),
                   child: SizedBox(
