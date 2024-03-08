@@ -1,14 +1,18 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:news_assistant/components/news_agency_header.dart';
+import 'package:news_assistant/models/news.dart';
 import 'package:news_assistant/resources/resources.dart';
+import 'package:news_assistant/router.dart';
 
 class NewsDetailView extends StatelessWidget {
-  const NewsDetailView({super.key, required this.id});
+  const NewsDetailView({super.key, required this.articles});
 
-  final String id;
+  final Articles articles;
 
   @override
   Widget build(BuildContext context) {
@@ -17,30 +21,81 @@ class NewsDetailView extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          InkWell(
+            onTap: () =>
+                context.pushNamed(Routes.summarize.name, extra: articles),
+            borderRadius: BorderRadius.circular(45),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Material(
+                borderRadius: BorderRadius.circular(45),
+                color: Theme.of(context).colorScheme.primary.withOpacity(.2),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SvgPicture.asset(Svgs.stars,
+                          color: Theme.of(context).colorScheme.primary),
+                      const SizedBox(width: 6),
+                      Text(
+                        'AI Summarize',
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                            color: Theme.of(context).colorScheme.primary),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
           SizedBox(
             height: 310,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const NewsAgencyHeader(imageSize: 25),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(13.75),
-                  child: SizedBox(
-                    height: 216,
-                    child: Stack(
-                      children: [
-                        Image.asset(
-                          Images.placeholder,
-                          fit: BoxFit.cover,
-                          height: 216,
-                          width: MediaQuery.sizeOf(context).width,
-                        ),
-                        Container(
-                          height: 216,
-                          width: MediaQuery.sizeOf(context).width,
-                          color: Colors.red.withOpacity(.2),
-                        ),
-                      ],
+                NewsAgencyHeader(imageSize: 25, articles: articles),
+                Hero(
+                  tag: articles.title!,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(13.75),
+                    child: SizedBox(
+                      height: 216,
+                      child: Stack(
+                        children: [
+                          articles.urlToImage == null
+                              ? Image.asset(
+                                  Images.placeholder,
+                                  fit: BoxFit.fill,
+                                  height: 216,
+                                  width: MediaQuery.sizeOf(context).width,
+                                )
+                              : CachedNetworkImage(
+                                  imageUrl: articles.urlToImage!,
+                                  fit: BoxFit.fill,
+                                  height: 216,
+                                  width: MediaQuery.sizeOf(context).width,
+                                  progressIndicatorBuilder:
+                                      (context, url, downloadProgress) => Center(
+                                    child: CircularProgressIndicator(
+                                        value: downloadProgress.progress),
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      Image.asset(
+                                    Images.placeholder,
+                                    fit: BoxFit.fill,
+                                    height: 167,
+                                    width: MediaQuery.sizeOf(context).width,
+                                  ),
+                                ),
+                          Container(
+                            height: 216,
+                            width: MediaQuery.sizeOf(context).width,
+                            color: Colors.black.withOpacity(.2),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -48,23 +103,21 @@ class NewsDetailView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          Text('GENERAL NEWS',
+          Text('NEWS HEADLINE',
               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.primary)),
           const SizedBox(height: 10),
-          Text(
-              'Traffic in Philippines\' Capital City of Manila Worsens Despite Measures to Ease Congestion',
+          Text(articles.title!,
               style: Theme.of(context)
                   .textTheme
                   .bodyLarge!
-                  .copyWith(fontWeight: FontWeight.w900, fontSize: 24)),
+                  .copyWith(fontWeight: FontWeight.w900, fontSize: 24,
+                  letterSpacing: 0,
+                  height: 1.1)),
           const SizedBox(height: 10),
           Text(
-            '''MANILA, Philippines - Despite efforts to ease traffic congestion in the capital city of Manila, residents are reporting that traffic has only gotten worse. The government has implemented a number of measures in recent years, including the construction of new roadways and the implementation of a color-coded coding scheme for vehicles, but these efforts have done little to alleviate the problem.
-According to a recent survey, the average commuter in Manila spends an average of three hours a day stuck in traffic. This has not only caused frustration and inconvenience for residents, but it is also taking a toll on the city's economy. Businesses are struggling to keep up with the high costs of transportation and delivery, and many residents are finding it difficult to make it to work on time.
-The government has acknowledged the problem and is looking for new solutions to ease the traffic congestion. Some officials have suggested the implementation of a more comprehensive public transportation system, while others have proposed the construction of new flyovers and underpasses.
-As the population and urbanization of Manila is growing rapidly, traffic congestion is becoming a major problem for the city. The government is doing efforts to ease the traffic but seems not enough to solve the problem. Hopefully, new solutions will be implemented soon to improve the quality of life for the residents of Manila.''',
+            '''${articles.content ?? articles.description}''',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(

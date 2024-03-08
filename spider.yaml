@@ -36,3 +36,6 @@ groups:
   - path: assets/svgs
     class_name: Svgs
     types: [ .svg ]
+  - path: assets/rive
+    class_name: RiveAssets
+    types: [ .riv ]
