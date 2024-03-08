@@ -62,8 +62,18 @@ class _HomeViewState extends State<HomeView> {
                 color: Theme.of(context).colorScheme.primary),
           ),
           const SizedBox(height: 18),
-          NewsCard(
-            onTap: () {},
+          SizedBox(
+            height: 265,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context,index){
+              return SizedBox(
+                width: MediaQuery.sizeOf(context).width/1.2,
+                child: NewsCard(
+                            onTap: () {},
+                          ),
+              );
+            }, separatorBuilder: (__,_)=> const SizedBox(width: 10,), itemCount: 10),
           ),
           const SizedBox(
             height: 18,
@@ -186,6 +196,8 @@ class NewsCard extends StatelessWidget {
               const SizedBox(height: 14),
               Text(
                 'Traffic in Philippines\' Capital City of Manila Worsens Despite Measures to Ease Congestion',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
