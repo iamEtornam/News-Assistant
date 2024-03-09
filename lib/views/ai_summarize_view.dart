@@ -30,6 +30,40 @@ class AiSummarizeView extends ConsumerStatefulWidget {
 class _AiSummarizeViewState extends ConsumerState<AiSummarizeView> {
   GenerateContentResponse? response;
   bool loading = false;
+  final languages = [
+    'English',
+    'French',
+    'German',
+    'Hindi',
+    'Italian',
+    'Japanese',
+    'Korean',
+    'Portuguese',
+    'Russian',
+    'Spanish',
+    'Turkish',
+    'Vietnamese',
+    'Indonesian',
+    'Chinese',
+    'Thai',
+    'Arabic',
+    'Bengali',
+    'Bulgarian',
+    'Catalan',
+    'Czech',
+    'Danish',
+    'Dutch',
+    'Filipino',
+    'Finnish',
+    'Galician',
+    'Greek',
+    'Hebrew',
+    'Hindi',
+    'Hungarian',
+    'Irish',
+    'Icelandic',
+    'Kannada',
+  ];
   @override
   void initState() {
     super.initState();
@@ -93,7 +127,7 @@ class _AiSummarizeViewState extends ConsumerState<AiSummarizeView> {
                     ),
               body: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: snapshot.data == null
+                child: response == null || snapshot.data == null
                     ? Center(
                         child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -126,21 +160,33 @@ class _AiSummarizeViewState extends ConsumerState<AiSummarizeView> {
   showTranslationList() async {
     final language = await showModalBottomSheet(
         context: context,
+        showDragHandle: true,
+        enableDrag: true,
+        isScrollControlled: true,
+        isDismissible: true,
+        anchorPoint: Offset.fromDirection(0.5),
         builder: (context) {
-          return Padding(
+          return Container(
+            height: MediaQuery.sizeOf(context).height * .8,
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                ListTile(
-                  title: const Text('French'),
-                  onTap: () => Navigator.pop(context, 'French'),
-                ),
-                const Divider(),
-                ListTile(
-                  title: const Text('Spanish'),
-                  onTap: () => Navigator.pop(context, 'Spanish'),
-                )
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ...languages.map((e) => ListTile(
+                        title: Text(
+                          e,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(fontSize: 18),
+                        ),
+                        onTap: () {
+                          Navigator.pop(context, e);
+                        },
+                      )),
+                ],
+              ),
             ),
           );
         });
