@@ -171,13 +171,13 @@ class AppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             const Spacer(),
             InkWell(
-                onTap: () {},
+                onTap: onBookmark,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SvgPicture.asset(Svgs.bookmark),
                 )),
             InkWell(
-                onTap: () {},
+                onTap: onShare,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SvgPicture.asset(Svgs.share),

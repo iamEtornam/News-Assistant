@@ -12,7 +12,7 @@
 This project uses Google's [Gemini API](https://developers.generativeai.google/tutorials/setup) to create a news summary app in [Flutter](https://flutter.dev) 
 
 ## Art
-
+<p>
 <tr>
     <td><img align="left" src="https://raw.githubusercontent.com/iamEtornam/News-Assistant/main/screenshots/art_1.png" width="200" height="400"/></td>
     <td><img src="https://raw.githubusercontent.com/iamEtornam/News-Assistant/main/screenshots/art_2.png" width="200" height="400"/></td> 
@@ -30,8 +30,10 @@ This project uses Google's [Gemini API](https://developers.generativeai.google/t
 </br>
 <tr>
     <td><img align="left" src="https://raw.githubusercontent.com/iamEtornam/News-Assistant/main/screenshots/art_7.png" width="200" height="400"/></td>
-  
+      <td><img align="left" src="https://raw.githubusercontent.com/iamEtornam/News-Assistant/main/screenshots/art_8.png" width="200" height="400"/></td>
 </tr>
+</p>
+</br>
 
 ## Getting Started
 
