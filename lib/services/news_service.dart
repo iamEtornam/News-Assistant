@@ -10,7 +10,9 @@ import 'package:news_assistant/utils/util.dart';
 abstract class NewsServices {
   Future<News> headlines({String country = 'gh'});
   Future<News> otherNews({String country = 'gh'});
-  Future<GenerateContentResponse> summarize({required String article});
+  Future<GenerateContentResponse> summarize({required String articleuRL});
+  Future<GenerateContentResponse> translate(
+      {required String text, required String language});
 }
 
 class NewsServicesImpl extends NewsServices {
@@ -66,9 +68,10 @@ class NewsServicesImpl extends NewsServices {
   }
 
   @override
-  Future<GenerateContentResponse> summarize({required String article}) async {
+  Future<GenerateContentResponse> summarize(
+      {required String articleuRL}) async {
     try {
-      final webContent = await getMainArticleContent(article);
+      final webContent = await getMainArticleContent(articleuRL);
       final String prompt =
           'Given the following article content, please generate a concise summary'
           ' highlighting the main points and key details. '
@@ -81,6 +84,19 @@ class NewsServicesImpl extends NewsServices {
     } catch (e) {
       log('$e');
       throw Exception(e);
+    }
+  }
+
+  @override
+  Future<GenerateContentResponse> translate(
+      {required String text, required String language}) async {
+    try {
+      final prompt = 'Translate the following text to $language: $text';
+      final content = [Content.text(prompt)];
+      final response = await model.generateContent(content);
+      return response;
+    } catch (e) {
+      rethrow;
     }
   }
 }

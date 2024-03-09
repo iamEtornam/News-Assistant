@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,20 +28,34 @@ class AiSummarizeView extends ConsumerStatefulWidget {
 }
 
 class _AiSummarizeViewState extends ConsumerState<AiSummarizeView> {
+  GenerateContentResponse? response;
+  bool loading = false;
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {});
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      setState(() {
+        loading = true;
+      });
+      final newsManager = ref.read(_newsManager);
+
+      response = await newsManager.summarize(article: widget.article.url ?? '');
+      setState(() {
+        loading = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final newsManager = ref.read(_newsManager);
-
     return Scaffold(
-      body: FutureBuilder<GenerateContentResponse>(
-          future: newsManager.summarize(article: widget.article.url ?? ''),
+      body: FutureBuilder<GenerateContentResponse?>(
+          future: Future.value(response),
           builder: (context, snapshot) {
+            if (loading) {
+              return const LoadingWidget();
+            }
+
             return Scaffold(
               appBar: AppBar(
                 leading: IconButton(
@@ -49,35 +65,48 @@ class _AiSummarizeViewState extends ConsumerState<AiSummarizeView> {
                       width: 35,
                     )),
                 actions: [
-                  IconButton(
-                      onPressed: () async {
-                        if(snapshot.data?.text == null) return;
-                        await Clipboard.setData(
-                                ClipboardData(text: snapshot.data?.text ?? ''))
-                            .then((value) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10))),
-                                  content: Text('Copied to clipboard!')));
-                        });
-                      },
-                      icon: const Icon(Icons.copy_rounded))
+                  if (snapshot.data != null) ...{
+                    IconButton(
+                        onPressed: () async {
+                          if (snapshot.data?.text == null) return;
+                          await Clipboard.setData(ClipboardData(
+                                  text: snapshot.data?.text ?? ''))
+                              .then((value) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10))),
+                                    content: Text('Copied to clipboard!')));
+                          });
+                        },
+                        icon: const Icon(Icons.copy_rounded))
+                  }
                 ],
               ),
+              floatingActionButton: snapshot.data == null
+                  ? null
+                  : FloatingActionButton(
+                      onPressed: () async => showTranslationList(),
+                      child: const Icon(Icons.translate),
+                    ),
               body: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: FutureBuilder<GenerateContentResponse>(
-                    future: newsManager.summarize(
-                        article: widget.article.url ?? ''),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting &&
-                          !snapshot.hasData) {
-                        return const LoadingWidget();
-                      }
-                      return SelectableText.rich(
+                child: snapshot.data == null
+                    ? Center(
+                        child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.sentiment_dissatisfied),
+                          Text(
+                            '${snapshot.error ?? 'Couldn\t summarize article'}',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ],
+                      ))
+                    : SelectableText.rich(
                         TextSpan(
                           style: Theme.of(context)
                               .textTheme
@@ -87,12 +116,49 @@ class _AiSummarizeViewState extends ConsumerState<AiSummarizeView> {
                             snapshot.data?.text ?? '',
                           ),
                         ),
-                      );
-                    }),
+                      ),
               ),
             );
           }),
     );
+  }
+
+  showTranslationList() async {
+    final language = await showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                ListTile(
+                  title: const Text('French'),
+                  onTap: () => Navigator.pop(context, 'French'),
+                ),
+                const Divider(),
+                ListTile(
+                  title: const Text('Spanish'),
+                  onTap: () => Navigator.pop(context, 'Spanish'),
+                )
+              ],
+            ),
+          );
+        });
+
+    if (language == null) return;
+    if (response?.text == null) return;
+    setState(() {
+      loading = true;
+    });
+    final translate = await ref
+        .read(_newsManager)
+        .translate(text: response?.text ?? '', language: language);
+    log('translate: ${translate.text}');
+
+    setState(() {
+      response = translate;
+      loading = false;
+    });
   }
 }
 

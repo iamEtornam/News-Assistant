@@ -11,14 +11,14 @@ import 'package:news_assistant/router.dart';
 import 'package:share_plus/share_plus.dart';
 
 class NewsDetailView extends StatelessWidget {
-  const NewsDetailView({super.key, required this.articles, required this.heroTag});
+  const NewsDetailView(
+      {super.key, required this.articles, required this.heroTag});
 
   final Articles articles;
   final String heroTag;
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         onBookmark: () {},
@@ -28,34 +28,28 @@ class NewsDetailView extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          InkWell(
-            onTap: () =>
-                context.pushNamed(Routes.summarize.name, extra: articles),
-            borderRadius: BorderRadius.circular(45),
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Material(
-                borderRadius: BorderRadius.circular(45),
-                color: Theme.of(context).colorScheme.primary.withOpacity(.2),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SvgPicture.asset(Svgs.stars,
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+                style: TextButton.styleFrom(
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primary.withOpacity(.2),
+                    shape: const StadiumBorder()),
+                onPressed: () =>
+                    context.pushNamed(Routes.summarize.name, extra: articles),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SvgPicture.asset(Svgs.stars,
+                        color: Theme.of(context).colorScheme.primary),
+                    const SizedBox(width: 6),
+                    Text(
+                      'AI Summarize',
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
                           color: Theme.of(context).colorScheme.primary),
-                      const SizedBox(width: 6),
-                      Text(
-                        'AI Summarize',
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            color: Theme.of(context).colorScheme.primary),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
+                    )
+                  ],
+                )),
           ),
           SizedBox(
             height: 310,
