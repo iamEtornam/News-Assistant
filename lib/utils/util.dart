@@ -105,11 +105,10 @@ Future<String?> getMainArticleContent(String url) async {
       // Extract and return the text content of the remaining elements
       return document.body?.text;
     } else {
-      print('Failed to fetch the webpage. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to fetch the webpage. Status code: ${response.statusCode}');
     }
   } catch (e) {
-    print('Error: $e');
+    rethrow;
   }
-
-  return null;
 }

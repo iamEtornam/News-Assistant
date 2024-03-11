@@ -1,7 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:news_assistant/router.dart';
-import 'package:news_assistant/theme.dart';
+import 'package:news_assistant/components/theme.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
