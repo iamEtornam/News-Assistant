@@ -118,7 +118,7 @@ class NewsDetailView extends StatelessWidget {
                   height: 1.1)),
           const SizedBox(height: 10),
           Text(
-            '''${articles.content ?? articles.description}''',
+            '''${articles.description}''',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(
