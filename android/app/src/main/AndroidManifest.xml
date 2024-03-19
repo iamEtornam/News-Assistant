@@ -3,6 +3,13 @@
         android:label="news_assistant"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
+
+        <queries>  
+            <intent>  
+                <action android:name="android.intent.action.TTS_SERVICE" />  
+            </intent>  
+        </queries> 
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"
