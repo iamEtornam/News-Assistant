@@ -13,6 +13,7 @@ import 'package:news_assistant/services/news_service.dart';
 import 'package:news_assistant/services/services.dart';
 import 'package:news_assistant/utils/util.dart';
 import 'package:rive/rive.dart';
+import 'package:text_to_speech/text_to_speech.dart';
 
 final _newsService = getIt.get<NewsServices>();
 final _newsManager =
@@ -28,6 +29,7 @@ class AiSummarizeView extends ConsumerStatefulWidget {
 }
 
 class _AiSummarizeViewState extends ConsumerState<AiSummarizeView> {
+  final tts = TextToSpeech();
   GenerateContentResponse? response;
   bool loading = false;
   final languages = [
@@ -121,9 +123,20 @@ class _AiSummarizeViewState extends ConsumerState<AiSummarizeView> {
               ),
               floatingActionButton: snapshot.data == null
                   ? null
-                  : FloatingActionButton(
-                      onPressed: () async => showTranslationList(),
-                      child: const Icon(Icons.translate),
+                  : Column(
+                      children: [
+                        FloatingActionButton(
+                          onPressed: () async => showTranslationList(),
+                          child: const Icon(Icons.translate),
+                        ),
+                        const SizedBox(
+                          height: 6,
+                        ),
+                        FloatingActionButton(
+                          onPressed: () async => speakOutText(),
+                          child: const Icon(Icons.volume_up_rounded),
+                        ),
+                      ],
                     ),
               body: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -155,6 +168,14 @@ class _AiSummarizeViewState extends ConsumerState<AiSummarizeView> {
             );
           }),
     );
+  }
+
+  speakOutText() async {
+    if (response?.text == null) return;
+    String text = response?.text ?? "";
+    double volume = 1.0;
+    tts.setVolume(volume); 
+    tts.speak(text);
   }
 
   showTranslationList() async {

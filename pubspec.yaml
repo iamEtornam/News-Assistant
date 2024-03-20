@@ -22,6 +22,7 @@ dependencies:
   rive: ^0.12.4
   riverpod_annotation: ^2.3.4
   share_plus: ^7.2.2
+  text_to_speech: ^0.2.3
 
 
 
