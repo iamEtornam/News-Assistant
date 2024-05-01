@@ -34,6 +34,7 @@ class _AiSummarizeViewState extends ConsumerState<AiSummarizeView> {
   bool loading = false;
   final languages = [
     'English',
+    'Sesotho',
     'French',
     'German',
     'Hindi',
@@ -83,6 +84,12 @@ class _AiSummarizeViewState extends ConsumerState<AiSummarizeView> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    tts.stop();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder<GenerateContentResponse?>(
@@ -124,6 +131,7 @@ class _AiSummarizeViewState extends ConsumerState<AiSummarizeView> {
               floatingActionButton: snapshot.data == null
                   ? null
                   : Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         FloatingActionButton(
                           onPressed: () async => showTranslationList(),
@@ -174,7 +182,7 @@ class _AiSummarizeViewState extends ConsumerState<AiSummarizeView> {
     if (response?.text == null) return;
     String text = response?.text ?? "";
     double volume = 1.0;
-    tts.setVolume(volume); 
+    tts.setVolume(volume);
     tts.speak(text);
   }
 
